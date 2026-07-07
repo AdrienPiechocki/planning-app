@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Planning{% endblock %} · planning://</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/htmx/1.9.12/htmx.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.5/cdn.min.js" defer></script>
+</head>
+<body>
+  <nav class="topnav">
+    <span class="topnav__logo">planning://</span>
+    <div class="topnav__links">
+      <a href="/semaine" class="{{ 'active' if active == 'semaine' else '' }}">Cette semaine</a>
+      <a href="/media" class="{{ 'active' if active == 'media' else '' }}">Bibliothèque</a>
+      <a href="/skills" class="{{ 'active' if active == 'skills' else '' }}">Compétences</a>
+      <a href="/constraints" class="{{ 'active' if active == 'constraints' else '' }}">Impératifs récurrents</a>
+    </div>
+  </nav>
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

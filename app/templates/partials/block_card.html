@@ -1,0 +1,22 @@
+<div class="block-card block-card--{{ block.categorie.value }}" id="block-{{ block.id }}">
+  <span class="tag tag--{{ block.categorie.value }}">
+    {%- if block.categorie.value == 'imperatif_recurrent' -%}Récurrent
+    {%- elif block.categorie.value == 'imperatif_exceptionnel' -%}Exceptionnel
+    {%- elif block.categorie.value == 'projet_dev' -%}Dev
+    {%- else -%}Loisir{%- endif -%}
+  </span>
+  {% if block.heure_debut and block.heure_fin %}
+  <div class="block-card__time">{{ block.heure_debut.strftime('%H:%M') }} – {{ block.heure_fin.strftime('%H:%M') }}</div>
+  {% else %}
+  <div class="block-card__time">Toute la journée</div>
+  {% endif %}
+  <div class="block-card__title">{{ block.titre }}</div>
+  {% if block.description %}<p class="block-card__desc">{{ block.description }}</p>{% endif %}
+
+  {% if planning.statut.value != 'valide' %}
+  <div class="block-card__actions">
+    <button class="btn-sm" hx-get="/planning/{{ planning.id }}/blocks/{{ block.id }}/edit" hx-target="#block-{{ block.id }}" hx-swap="outerHTML">Modifier</button>
+    <button class="btn-sm btn-danger" hx-delete="/planning/{{ planning.id }}/blocks/{{ block.id }}" hx-target="#block-{{ block.id }}" hx-swap="outerHTML" hx-confirm="Supprimer ce bloc ?">Supprimer</button>
+  </div>
+  {% endif %}
+</div>

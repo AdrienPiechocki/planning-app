@@ -1,0 +1,29 @@
+<td colspan="4">
+  <div class="field-row" style="align-items: flex-end; flex-wrap: wrap;">
+    <div class="field">
+      <label>Nom</label>
+      <input type="text" name="nom" value="{{ item.nom }}" required>
+    </div>
+    <div class="field">
+      <label>Jour préféré <span class="muted">(optionnel)</span></label>
+      <select name="jour_prefere">
+        <option value="" {{ 'selected' if not item.jour_prefere else '' }}>Flexible / tous les jours</option>
+        {% for jour in ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi'] %}
+        <option value="{{ jour }}" {{ 'selected' if item.jour_prefere == jour else '' }}>{{ jour|capitalize }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="field">
+      <label>Début</label>
+      <input type="time" name="heure_debut" value="{{ item.heure_debut.strftime('%H:%M') if item.heure_debut else '' }}">
+    </div>
+    <div class="field">
+      <label>Fin</label>
+      <input type="time" name="heure_fin" value="{{ item.heure_fin.strftime('%H:%M') if item.heure_fin else '' }}">
+    </div>
+    <div class="field" style="flex-direction: row; gap: 0.5rem;">
+      <button type="button" class="btn-sm btn-primary" hx-patch="/constraints/{{ item.id }}" hx-include="closest tr" hx-target="#constraint-{{ item.id }}" hx-swap="innerHTML">Enregistrer</button>
+      <button type="button" class="btn-sm btn-ghost" hx-get="/constraints/{{ item.id }}/view" hx-target="#constraint-{{ item.id }}" hx-swap="innerHTML">Annuler</button>
+    </div>
+  </div>
+</td>

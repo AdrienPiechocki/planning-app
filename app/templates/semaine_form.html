@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+{% block title %}Cette semaine{% endblock %}
+{% block content %}
+
+<div class="eyebrow">Briefing hebdomadaire</div>
+<h1>Prépare ta semaine</h1>
+<p class="muted small">Renseigne les impératifs, tes envies de loisir et le thème du projet dev. L'IA locale se charge de proposer un planning à partir de ça.</p>
+
+<form method="post" action="/semaine" x-data="{
+  exceptionnels: [{nom: '', jour: '', heure_debut: '', heure_fin: ''}]
+}" style="margin-top: 1.5rem;">
+
+  <div class="card" style="margin-bottom: 1.25rem;">
+    <h2>Semaine concernée</h2>
+    <div class="field" style="max-width: 220px;">
+      <label for="semaine_du">Lundi de la semaine</label>
+      <input type="date" id="semaine_du" name="semaine_du" value="{{ default_monday }}" required>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom: 1.25rem;">
+    <h2>Impératifs récurrents actifs cette semaine</h2>
+    {% if recurring_constraints %}
+      {% for rc in recurring_constraints %}
+      <div class="checkbox-row">
+        <input type="checkbox" id="rc_{{ rc.id }}" name="recurring_ids" value="{{ rc.id }}" checked>
+        <label for="rc_{{ rc.id }}">{{ rc.nom }}{% if rc.jour_prefere %} <span class="muted small">({{ rc.jour_prefere }})</span>{% endif %}</label>
+      </div>
+      {% endfor %}
+    {% else %}
+      <p class="muted small">Aucun impératif récurrent enregistré. <a href="/constraints">En ajouter un</a>.</p>
+    {% endif %}
+  </div>
+
+  <div class="card" style="margin-bottom: 1.25rem;">
+    <h2>Impératifs exceptionnels (cette semaine uniquement)</h2>
+    <template x-for="(exc, i) in exceptionnels" :key="i">
+      <div class="field-row" style="margin-bottom: 0.75rem; align-items: flex-end;">
+        <div class="field">
+          <label>Nom</label>
+          <input type="text" name="exc_nom" x-model="exc.nom" placeholder="Entretien d'embauche">
+        </div>
+        <div class="field">
+          <label>Jour</label>
+          <input type="date" name="exc_jour" x-model="exc.jour">
+        </div>
+        <div class="field">
+          <label>Début</label>
+          <input type="time" name="exc_heure_debut" x-model="exc.heure_debut">
+        </div>
+        <div class="field">
+          <label>Fin</label>
+          <input type="time" name="exc_heure_fin" x-model="exc.heure_fin">
+        </div>
+        <button type="button" class="btn-ghost btn-sm" @click="exceptionnels.splice(i, 1)" x-show="exceptionnels.length > 1">Retirer</button>
+      </div>
+    </template>
+    <button type="button" class="btn-sm" @click="exceptionnels.push({nom: '', jour: '', heure_debut: '', heure_fin: ''})">+ Ajouter un impératif exceptionnel</button>
+  </div>
+
+  <div class="card" style="margin-bottom: 1.25rem;" x-data="{ mode: 'priorise' }">
+    <h2>Envie de jeu</h2>
+    <p class="muted small">Aucune IA n'intervient dans ce choix : c'est un algorithme. "Sélection priorisée" pioche dans toute la bibliothèque en donnant la priorité aux jeux "en cours". "Sélection aléatoire" tire au sort, sans priorité, uniquement parmi les jeux que tu coches ci-dessous.</p>
+    <div class="field" style="max-width: 220px; margin-bottom: 0.75rem;">
+      <label for="nombre_jeux">Nombre de jeux cette semaine</label>
+      <input type="number" id="nombre_jeux" name="nombre_jeux" value="1" min="0" max="10">
+    </div>
+    <div class="checkbox-row">
+      <input type="radio" id="jeu_mode_priorise" name="jeu_mode" value="priorise" x-model="mode" checked>
+      <label for="jeu_mode_priorise">Sélection priorisée (en cours &gt; à faire) dans toute la bibliothèque</label>
+    </div>
+    <div class="checkbox-row">
+      <input type="radio" id="jeu_mode_aleatoire" name="jeu_mode" value="aleatoire" x-model="mode">
+      <label for="jeu_mode_aleatoire">Sélection aléatoire (sans priorité) parmi ma sélection</label>
+    </div>
+    <div x-show="mode === 'aleatoire'" style="margin-top: 0.5rem; margin-left: 1.5rem;">
+      {% for m in jeux %}
+      <div class="checkbox-row">
+        <input type="checkbox" id="jeu_{{ m.id }}" name="loisir_jeu_media_ids" value="{{ m.id }}" :disabled="mode !== 'aleatoire'">
+        <label for="jeu_{{ m.id }}">
+          {{ m.titre }}
+          <span class="muted small">({{ m.statut.value }})</span>
+        </label>
+      </div>
+      {% else %}
+      <p class="muted small">Aucun jeu en bibliothèque. <a href="/media">En ajouter un</a>.</p>
+      {% endfor %}
+    </div>
+    <div class="field" style="margin-top: 0.75rem;">
+      <label>Note pour cette envie de jeu (optionnel)</label>
+      <textarea name="notes_jeu" placeholder="ex: j'aimerais surtout avancer le donjon final"></textarea>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom: 1.25rem;" x-data="{ mode: 'priorise' }">
+    <h2>Envie de film ou série</h2>
+    <p class="muted small">Aucune IA n'intervient dans ce choix : c'est un algorithme. "Sélection priorisée" pioche dans toute la bibliothèque en donnant la priorité à ce qui est "en cours". "Sélection aléatoire" tire au sort, sans priorité, uniquement parmi ta sélection ci-dessous.</p>
+    <div class="field" style="max-width: 220px; margin-bottom: 0.75rem;">
+      <label for="nombre_films_series">Nombre de films/séries cette semaine</label>
+      <input type="number" id="nombre_films_series" name="nombre_films_series" value="1" min="0" max="10">
+    </div>
+    <div class="checkbox-row">
+      <input type="radio" id="film_serie_mode_priorise" name="film_serie_mode" value="priorise" x-model="mode" checked>
+      <label for="film_serie_mode_priorise">Sélection priorisée (en cours &gt; à faire) dans toute la bibliothèque</label>
+    </div>
+    <div class="checkbox-row">
+      <input type="radio" id="film_serie_mode_aleatoire" name="film_serie_mode" value="aleatoire" x-model="mode">
+      <label for="film_serie_mode_aleatoire">Sélection aléatoire (sans priorité) parmi ma sélection</label>
+    </div>
+    <div x-show="mode === 'aleatoire'" style="margin-top: 0.5rem; margin-left: 1.5rem;">
+      {% for m in films_series %}
+      <div class="checkbox-row">
+        <input type="checkbox" id="film_serie_{{ m.id }}" name="loisir_film_serie_media_ids" value="{{ m.id }}" :disabled="mode !== 'aleatoire'">
+        <label for="film_serie_{{ m.id }}">
+          {{ m.titre }}
+          <span class="muted small">({{ m.type.value }}, {{ m.statut.value }})</span>
+        </label>
+      </div>
+      {% else %}
+      <p class="muted small">Aucun film/série en bibliothèque. <a href="/media">En ajouter un</a>.</p>
+      {% endfor %}
+    </div>
+    <div class="field" style="margin-top: 0.75rem;">
+      <label>Note pour cette envie de film/série (optionnel)</label>
+      <textarea name="notes_film_serie" placeholder="ex: si possible en VO sous-titrée"></textarea>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom: 1.25rem;" x-data="{ mode: 'aleatoire' }">
+    <h2>Projet de développement</h2>
+    <p class="muted small">Aucune IA n'intervient dans ce choix de sujet : c'est un algorithme. "Choix aléatoire" tire au sort une compétence (priorité aux envies d'apprentissage). "Sélection par l'utilisateur" utilise directement ce que tu coches (un ou plusieurs sujets, combinés par l'IA en une seule idée de projet).</p>
+    <div class="checkbox-row">
+      <input type="radio" id="dev_mode_aleatoire" name="dev_mode" value="aleatoire" x-model="mode" checked>
+      <label for="dev_mode_aleatoire">Choix aléatoire unique en fonction des compétences</label>
+    </div>
+    <div class="checkbox-row">
+      <input type="radio" id="dev_mode_manuel" name="dev_mode" value="manuel" x-model="mode">
+      <label for="dev_mode_manuel">Sélection unique ou multiple par l'utilisateur</label>
+    </div>
+    <div x-show="mode === 'manuel'" style="margin-top: 0.5rem; margin-left: 1.5rem;">
+      {% for s in skill_goals %}
+      <div class="checkbox-row">
+        <input type="checkbox" id="skill_{{ s.id }}" name="projet_dev_skill_ids" value="{{ s.id }}" :disabled="mode !== 'manuel'">
+        <label for="skill_{{ s.id }}">
+          {{ s.nom }}
+          <span class="muted small">({{ s.niveau_actuel or "niveau non précisé" }}{% if s.est_envie_apprentissage %}, envie d'apprentissage{% endif %})</span>
+        </label>
+      </div>
+      {% else %}
+      <p class="muted small">Aucune compétence enregistrée. <a href="/skills">En ajouter une</a>.</p>
+      {% endfor %}
+    </div>
+    <div class="field" style="margin-top: 0.75rem;">
+      <label>Note pour ce projet dev (optionnel)</label>
+      <textarea name="notes_projet_dev" placeholder="ex: améliorer mon rice avec Quickshell"></textarea>
+    </div>
+  </div>
+
+  <button type="submit" class="btn-primary">Générer le planning →</button>
+</form>
+
+{% if recent_inputs %}
+<div style="margin-top: 3rem;">
+  <h2>Semaines précédentes</h2>
+  <table>
+    <thead><tr><th>Semaine du</th><th>Planning</th><th></th></tr></thead>
+    <tbody>
+      {% for wi in recent_inputs %}
+      <tr>
+        <td>{{ wi.semaine_du.strftime('%d/%m/%Y') }}</td>
+        <td>
+          {% if wi.generated_planning %}
+            <a href="/planning/{{ wi.generated_planning.id }}">Voir le planning ({{ wi.generated_planning.statut.value }})</a>
+          {% else %}
+            <span class="muted small">Pas encore généré</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if wi.generated_planning %}
+          <form method="post" action="/planning/{{ wi.generated_planning.id }}/delete" onsubmit="return confirm('Supprimer définitivement ce planning et tous ses blocs ?');">
+            <button type="submit" class="btn-sm btn-danger">Supprimer</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% endblock %}

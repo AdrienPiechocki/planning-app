@@ -1,0 +1,11 @@
+<td>{{ item.nom }}</td>
+<td class="muted">{{ item.jour_prefere or 'Flexible' }}</td>
+<td class="muted">
+  {% if item.heure_debut and item.heure_fin %}{{ item.heure_debut.strftime('%H:%M') }} – {{ item.heure_fin.strftime('%H:%M') }}{% else %}—{% endif %}
+</td>
+<td>
+  <button type="button" class="btn-sm" hx-get="/constraints/{{ item.id }}/edit" hx-target="#constraint-{{ item.id }}" hx-swap="innerHTML">Modifier</button>
+  <form method="post" action="/constraints/{{ item.id }}/delete" onsubmit="return confirm('Supprimer ?');" style="display:inline">
+    <button type="submit" class="btn-sm btn-danger">Supprimer</button>
+  </form>
+</td>

@@ -1,0 +1,34 @@
+<form class="block-card block-card--{{ block.categorie.value }}" id="block-{{ block.id }}"
+      hx-patch="/planning/{{ block.planning_id }}/blocks/{{ block.id }}" hx-target="#block-{{ block.id }}" hx-swap="outerHTML">
+  <input type="hidden" name="jour" value="{{ block.jour.isoformat() }}">
+  <div class="field-row">
+    <div class="field">
+      <label>Début</label>
+      <input type="time" name="heure_debut" value="{{ block.heure_debut.strftime('%H:%M') if block.heure_debut else '' }}">
+    </div>
+    <div class="field">
+      <label>Fin</label>
+      <input type="time" name="heure_fin" value="{{ block.heure_fin.strftime('%H:%M') if block.heure_fin else '' }}">
+    </div>
+  </div>
+  <div class="field">
+    <label>Titre</label>
+    <input type="text" name="titre" value="{{ block.titre }}" required>
+  </div>
+  <div class="field">
+    <label>Description</label>
+    <textarea name="description">{{ block.description }}</textarea>
+  </div>
+  <div class="field">
+    <label>Catégorie</label>
+    <select name="categorie">
+      {% for value, label in [('loisir','Loisir'), ('projet_dev','Projet dev'), ('imperatif_recurrent','Impératif récurrent'), ('imperatif_exceptionnel','Impératif exceptionnel')] %}
+      <option value="{{ value }}" {{ 'selected' if block.categorie.value == value else '' }}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="block-card__actions">
+    <button type="submit" class="btn-sm btn-primary">Enregistrer</button>
+    <button type="button" class="btn-sm btn-ghost" hx-get="/planning/{{ block.planning_id }}/blocks/{{ block.id }}/view" hx-target="#block-{{ block.id }}" hx-swap="outerHTML">Annuler</button>
+  </div>
+</form>

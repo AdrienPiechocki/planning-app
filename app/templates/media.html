@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Bibliothèque{% endblock %}
+{% block content %}
+
+<div class="eyebrow">Sources pour l'IA</div>
+<h1>Bibliothèque de jeux, films &amp; séries</h1>
+<p class="muted small">L'IA locale priorise les éléments "en cours" pour te proposer des activités de loisir cohérentes.</p>
+
+<form method="post" action="/media" class="list-add-form card" style="margin-top: 1.5rem;">
+  <div class="field">
+    <label>Titre</label>
+    <input type="text" name="titre" required placeholder="Frieren : Beyond Journey's End">
+  </div>
+  <div class="field">
+    <label>Type</label>
+    <select name="type">
+      <option value="jeu_video">Jeu vidéo</option>
+      <option value="film">Film</option>
+      <option value="serie">Série</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Statut</label>
+    <select name="statut">
+      <option value="a_faire">À faire</option>
+      <option value="en_cours" selected>En cours</option>
+      <option value="termine">Terminé</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Durée de session (minutes)</label>
+    <input type="number" name="duree_session_minutes" value="60">
+  </div>
+  <div class="field">
+    <label>Séances restantes cette semaine (optionnel)</label>
+    <input type="number" name="sessions_restantes" min="1" placeholder="ex: 5 épisodes restants">
+  </div>
+  <button type="submit" class="btn-primary">Ajouter</button>
+</form>
+
+<table>
+  <thead><tr><th>Titre</th><th>Type</th><th>Statut</th><th>Durée session</th><th>Séances restantes</th><th></th></tr></thead>
+  <tbody>
+    {% for item in items %}
+    <tr id="media-{{ item.id }}">
+      {% include "partials/media_row_view.html" %}
+    </tr>
+    {% else %}
+    <tr><td colspan="6" class="muted">Aucune entrée pour l'instant.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

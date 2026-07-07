@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Compétences{% endblock %}
+{% block content %}
+
+<div class="eyebrow">Sources pour l'IA</div>
+<h1>Compétences &amp; envies d'apprentissage</h1>
+<p class="muted small">Utilisé pour proposer une progression cohérente sur le projet de développement de la semaine.</p>
+
+<form method="post" action="/skills" class="list-add-form card" style="margin-top: 1.5rem;">
+  <div class="field">
+    <label>Nom</label>
+    <input type="text" name="nom" required placeholder="Rust, TUI, API REST...">
+  </div>
+  <div class="field">
+    <label>Niveau actuel</label>
+    <input type="text" name="niveau_actuel" placeholder="débutant / intermédiaire / avancé">
+  </div>
+  <div class="checkbox-row" style="margin-bottom: 0;">
+    <input type="checkbox" id="envie" name="est_envie_apprentissage">
+    <label for="envie">C'est une envie d'apprentissage</label>
+  </div>
+  <button type="submit" class="btn-primary">Ajouter</button>
+</form>
+
+<table>
+  <thead><tr><th>Nom</th><th>Niveau</th><th>Type</th><th></th></tr></thead>
+  <tbody>
+    {% for item in items %}
+    <tr id="skill-{{ item.id }}">
+      {% include "partials/skill_row_view.html" %}
+    </tr>
+    {% else %}
+    <tr><td colspan="4" class="muted">Aucune entrée pour l'instant.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

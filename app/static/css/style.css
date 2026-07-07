@@ -1,0 +1,232 @@
+/* ==========================================================================
+   Design tokens — thème "terminal / mission control"
+   Pensé pour un outil perso dev : ambiance sombre, accents type logs,
+   rail vertical façon graphe de commits pour relier les blocs d'une journée.
+   ========================================================================== */
+:root {
+  --bg-primary: #0B0F14;
+  --bg-surface: #131A22;
+  --bg-surface-hover: #1B2530;
+  --border-color: #232D38;
+  --text-primary: #E6EDF3;
+  --text-muted: #8B98A5;
+
+  --accent-recurrent: #4FD1C5;   /* impératif récurrent */
+  --accent-exceptionnel: #F2B84B; /* impératif exceptionnel */
+  --accent-dev: #A78BFA;          /* projet dev */
+  --accent-loisir: #F0729C;       /* loisir */
+
+  --danger: #F0605A;
+  --radius: 6px;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  line-height: 1.5;
+}
+
+a { color: inherit; }
+
+/* ---------- Navigation ---------- */
+.topnav {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 0.9rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-surface);
+}
+
+.topnav__logo {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--accent-recurrent);
+  letter-spacing: -0.02em;
+}
+.topnav__logo::after { content: '_'; animation: blink 1.2s step-end infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+
+.topnav__links { display: flex; gap: 1.25rem; font-family: var(--font-mono); font-size: 0.85rem; }
+.topnav__links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 0.35rem 0;
+  border-bottom: 2px solid transparent;
+}
+.topnav__links a:hover, .topnav__links a.active {
+  color: var(--text-primary);
+  border-bottom-color: var(--accent-recurrent);
+}
+
+.container { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+/* ---------- Typography helpers ---------- */
+h1, h2, h3 { font-family: var(--font-mono); font-weight: 600; letter-spacing: -0.01em; margin: 0 0 0.5rem; }
+h1 { font-size: 1.5rem; }
+h2 { font-size: 1.1rem; color: var(--text-muted); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.08em; }
+.eyebrow { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+.muted { color: var(--text-muted); }
+.small { font-size: 0.85rem; }
+
+/* ---------- Cards / surfaces ---------- */
+.card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+}
+
+/* ---------- Forms ---------- */
+label { display: block; font-family: var(--font-mono); font-size: 0.78rem; color: var(--text-muted); margin-bottom: 0.3rem; text-transform: uppercase; letter-spacing: 0.05em; }
+input[type=text], input[type=date], input[type=time], textarea, select {
+  width: 100%;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  color: var(--text-primary);
+  padding: 0.55rem 0.7rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+}
+textarea { resize: vertical; min-height: 4.5rem; }
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--accent-recurrent);
+  box-shadow: 0 0 0 3px rgba(79, 209, 197, 0.15);
+}
+.field { margin-bottom: 1.1rem; }
+.field-row { display: flex; gap: 0.75rem; }
+.field-row > .field { flex: 1; }
+
+.checkbox-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
+.checkbox-row input { width: auto; }
+.checkbox-row label { margin: 0; text-transform: none; font-family: var(--font-body); font-size: 0.95rem; color: var(--text-primary); letter-spacing: 0; }
+
+/* ---------- Buttons ---------- */
+button, .btn {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border-color);
+  background: var(--bg-surface-hover);
+  color: var(--text-primary);
+  padding: 0.55rem 1rem;
+  cursor: pointer;
+  transition: transform 0.1s ease, border-color 0.15s ease;
+}
+button:hover, .btn:hover { border-color: var(--accent-recurrent); transform: translateY(-1px); }
+.btn-primary { background: var(--accent-recurrent); color: #04211D; border-color: var(--accent-recurrent); font-weight: 600; }
+.btn-primary:hover { filter: brightness(1.08); }
+.btn-danger { color: var(--danger); }
+.btn-danger:hover { border-color: var(--danger); }
+.btn-ghost { background: transparent; border-color: transparent; color: var(--text-muted); }
+.btn-sm { padding: 0.3rem 0.6rem; font-size: 0.75rem; }
+
+/* ---------- Tags de catégorie ---------- */
+.tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  font-weight: 600;
+}
+.tag--imperatif_recurrent { background: rgba(79, 209, 197, 0.15); color: var(--accent-recurrent); }
+.tag--imperatif_exceptionnel { background: rgba(242, 184, 75, 0.15); color: var(--accent-exceptionnel); }
+.tag--projet_dev { background: rgba(167, 139, 250, 0.15); color: var(--accent-dev); }
+.tag--loisir { background: rgba(240, 114, 156, 0.15); color: var(--accent-loisir); }
+
+/* ---------- Grille planning : rail façon graphe de commits ---------- */
+.planning-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+}
+@media (max-width: 900px) {
+  .planning-grid { grid-template-columns: 1fr; }
+}
+
+.day-column__header {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-primary);
+  padding-bottom: 0.6rem;
+  margin-bottom: 0.8rem;
+  border-bottom: 1px solid var(--border-color);
+}
+.day-column__header .muted { display: block; font-size: 0.72rem; }
+
+.rail { position: relative; padding-left: 1.1rem; min-height: 2rem; }
+.rail::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 6px;
+  bottom: 6px;
+  width: 1px;
+  background: var(--border-color);
+}
+
+.block-card {
+  position: relative;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+  padding: 0.7rem 0.8rem;
+  margin-bottom: 0.7rem;
+  animation: fadein 0.25s ease;
+}
+.block-card::before {
+  content: '';
+  position: absolute;
+  left: -1.1rem;
+  top: 1rem;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 2px solid var(--bg-primary);
+}
+.block-card--imperatif_recurrent::before { background: var(--accent-recurrent); }
+.block-card--imperatif_exceptionnel::before { background: var(--accent-exceptionnel); }
+.block-card--projet_dev::before { background: var(--accent-dev); }
+.block-card--loisir::before { background: var(--accent-loisir); }
+
+@keyframes fadein { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+.block-card__title { font-weight: 600; margin: 0.3rem 0 0.15rem; }
+.block-card__time { font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-muted); }
+.block-card__desc { font-size: 0.85rem; color: var(--text-muted); margin: 0.3rem 0 0; }
+.block-card__actions { display: flex; gap: 0.4rem; margin-top: 0.5rem; }
+
+.empty-day { color: var(--text-muted); font-size: 0.8rem; font-style: italic; padding: 0.5rem 0; }
+
+/* ---------- Bannières d'état ---------- */
+.banner {
+  border-radius: var(--radius);
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  border: 1px solid;
+}
+.banner--warning { background: rgba(242, 184, 75, 0.08); border-color: var(--accent-exceptionnel); color: var(--accent-exceptionnel); }
+.banner--success { background: rgba(79, 209, 197, 0.08); border-color: var(--accent-recurrent); color: var(--accent-recurrent); }
+
+/* ---------- Table simple (bibliothèque, compétences...) ---------- */
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+th { text-align: left; font-family: var(--font-mono); font-size: 0.72rem; text-transform: uppercase; color: var(--text-muted); padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--border-color); }
+td { padding: 0.6rem; border-bottom: 1px solid var(--border-color); }
+tr:last-child td { border-bottom: none; }
+
+.list-add-form { display: flex; gap: 0.6rem; align-items: flex-end; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.list-add-form .field { margin-bottom: 0; min-width: 160px; flex: 1; }
+
+.status-pill { font-family: var(--font-mono); font-size: 0.68rem; padding: 0.15rem 0.5rem; border-radius: 999px; border: 1px solid var(--border-color); color: var(--text-muted); }

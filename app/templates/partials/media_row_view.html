@@ -1,0 +1,11 @@
+<td>{{ item.titre }}</td>
+<td>{{ item.type.value }}</td>
+<td><span class="status-pill">{{ item.statut.value }}</span></td>
+<td class="muted">{{ item.duree_session_minutes }} min</td>
+<td class="muted">{{ item.sessions_restantes if item.sessions_restantes is not none else '—' }}</td>
+<td>
+  <button type="button" class="btn-sm" hx-get="/media/{{ item.id }}/edit" hx-target="#media-{{ item.id }}" hx-swap="innerHTML">Modifier</button>
+  <form method="post" action="/media/{{ item.id }}/delete" onsubmit="return confirm('Supprimer ?');" style="display:inline">
+    <button type="submit" class="btn-sm btn-danger">Supprimer</button>
+  </form>
+</td>

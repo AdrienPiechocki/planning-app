@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Impératifs récurrents{% endblock %}
+{% block content %}
+
+<div class="eyebrow">Présents toutes les semaines</div>
+<h1>Impératifs récurrents</h1>
+<p class="muted small">Ils apparaîtront comme cases à cocher dans le formulaire du week-end — décoche ceux qui ne s'appliquent pas à une semaine donnée.</p>
+
+<form method="post" action="/constraints" class="list-add-form card" style="margin-top: 1.5rem;">
+  <div class="field">
+    <label>Nom</label>
+    <input type="text" name="nom" required placeholder="Recherche d'emploi">
+  </div>
+  <div class="field">
+    <label>Jour préféré <span class="muted">(optionnel)</span></label>
+    <select name="jour_prefere">
+      <option value="">Flexible / tous les jours</option>
+      <option value="lundi">Lundi</option>
+      <option value="mardi">Mardi</option>
+      <option value="mercredi">Mercredi</option>
+      <option value="jeudi">Jeudi</option>
+      <option value="vendredi">Vendredi</option>
+    </select>
+  </div>
+  <div class="field">
+    <label>Début</label>
+    <input type="time" name="heure_debut">
+  </div>
+  <div class="field">
+    <label>Fin</label>
+    <input type="time" name="heure_fin">
+  </div>
+  <button type="submit" class="btn-primary">Ajouter</button>
+</form>
+
+<table>
+  <thead><tr><th>Nom</th><th>Jour préféré</th><th>Horaire</th><th></th></tr></thead>
+  <tbody>
+    {% for item in items %}
+    <tr id="constraint-{{ item.id }}">
+      {% include "partials/constraint_row_view.html" %}
+    </tr>
+    {% else %}
+    <tr><td colspan="4" class="muted">Aucun impératif récurrent pour l'instant.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

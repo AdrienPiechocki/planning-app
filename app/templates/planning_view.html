@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Planning{% endblock %}
+{% block content %}
+
+{% if generation_warning %}
+<div class="banner banner--warning">
+  ⚠ Génération IA incomplète : {{ generation_warning }}<br>
+  <span class="small">Les impératifs ont bien été placés. Tu peux ajouter les loisirs/projet dev manuellement ci-dessous, ou réessayer plus tard.</span>
+</div>
+{% endif %}
+
+{% if validated_ok %}
+<div class="banner {{ 'banner--warning' if sync_warnings else 'banner--success' }}">
+  {% if sync_warnings %}
+    ⚠ Planning validé, mais avec des soucis de synchronisation :
+    <ul style="margin: 0.4rem 0 0 1.2rem;">
+      {% for w in sync_warnings %}<li>{{ w }}</li>{% endfor %}
+    </ul>
+  {% else %}
+    ✓ Planning validé et synchronisé sur Nextcloud (Calendar).
+  {% endif %}
+</div>
+{% endif %}
+
+<div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.5rem;">
+  <div>
+    <div class="eyebrow">Semaine du {{ planning.weekly_input.semaine_du.strftime('%d/%m/%Y') }}</div>
+    <h1>Planning <span class="status-pill">{{ planning.statut.value }}</span></h1>
+  </div>
+  {% if planning.statut.value != 'valide' %}
+  <div style="display: flex; gap: 0.6rem;">
+    <form method="post" action="/planning/{{ planning.id }}/regenerate" onsubmit="return confirm('Régénérer les activités IA (loisir/dev) ? Les impératifs restent inchangés.');">
+      <button type="submit" class="btn">↻ Régénérer les activités IA</button>
+    </form>
+    <form method="post" action="/planning/{{ planning.id }}/validate" onsubmit="return confirm('Valider ce planning ? Il sera synchronisé sur Nextcloud et ne sera plus modifiable.');">
+      <button type="submit" class="btn-primary">Valider et synchroniser →</button>
+    </form>
+    <form method="post" action="/planning/{{ planning.id }}/delete" onsubmit="return confirm('Supprimer définitivement ce planning et tous ses blocs ?');">
+      <button type="submit" class="btn-sm btn-danger">Supprimer</button>
+    </form>
+  </div>
+  {% else %}
+  <form method="post" action="/planning/{{ planning.id }}/delete" onsubmit="return confirm('Supprimer définitivement ce planning et tous ses blocs ?');">
+    <button type="submit" class="btn-sm btn-danger">Supprimer</button>
+  </form>
+  {% endif %}
+</div>
+
+<div class="planning-grid">
+  {% for jour, nom in days %}
+  <div class="day-column">
+    <div class="day-column__header">
+      {{ nom }}
+      <span class="muted">{{ jour.strftime('%d/%m') }}</span>
+    </div>
+    <div class="rail" id="rail-{{ jour.isoformat() }}">
+      {% for block in grouped[jour] %}
+        {% include "partials/block_card.html" %}
+      {% else %}
+        <div class="empty-day">Rien de prévu</div>
+      {% endfor %}
+    </div>
+
+    {% if planning.statut.value != 'valide' %}
+    <details style="margin-top: 0.6rem;">
+      <summary class="small muted" style="cursor: pointer;">+ Ajouter une activité</summary>
+      <form hx-post="/planning/{{ planning.id }}/blocks" hx-target="#rail-{{ jour.isoformat() }}" hx-swap="beforeend"
+            hx-on::after-request="this.reset()" style="margin-top: 0.6rem;">
+        <input type="hidden" name="jour" value="{{ jour.isoformat() }}">
+        <div class="field">
+          <input type="text" name="titre" placeholder="Titre" required>
+        </div>
+        <div class="field-row">
+          <div class="field"><input type="time" name="heure_debut"></div>
+          <div class="field"><input type="time" name="heure_fin"></div>
+        </div>
+        <div class="field">
+          <select name="categorie">
+            <option value="loisir">Loisir</option>
+            <option value="projet_dev">Projet dev</option>
+            <option value="imperatif_recurrent">Impératif récurrent</option>
+            <option value="imperatif_exceptionnel">Impératif exceptionnel</option>
+          </select>
+        </div>
+        <button type="submit" class="btn-sm">Ajouter</button>
+      </form>
+    </details>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

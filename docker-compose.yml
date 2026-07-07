@@ -1,0 +1,57 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: planning-ollama
+    restart: unless-stopped
+    volumes:
+      - ./ollama-data:/root/.ollama
+    networks:
+      - internal
+  ollama-pull:
+    image: ollama/ollama:latest
+    container_name: planning-ollama-pull
+    depends_on:
+      - ollama
+    networks:
+      - internal
+    environment:
+      OLLAMA_HOST: "http://ollama:11434"
+      OLLAMA_MODEL: "${OLLAMA_MODEL:-gemma3n}"
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo "Attente de la disponibilité d'Ollama..."
+        until ollama list >/dev/null 2>&1; do sleep 2; done
+        echo "Téléchargement du modèle ${OLLAMA_MODEL}..."
+        ollama pull "${OLLAMA_MODEL}"
+    restart: "no"
+
+  planning-app:
+    build: .
+    container_name: planning-app
+    restart: unless-stopped
+    depends_on:
+      - ollama
+    env_file:
+      - .env
+    environment:
+      DATABASE_URL: sqlite:////app/data/planning.db
+      OLLAMA_BASE_URL: "http://ollama:11434"
+    volumes:
+      - ./data:/app/data
+    networks:
+      - proxy
+      - internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.planning-app.rule=Host(`planning.adrien-dev.fr`)"
+      - "traefik.http.routers.planning-app.entrypoints=websecure"
+      - "traefik.http.routers.planning-app.tls.certresolver=letsencrypt"
+      - "traefik.http.services.planning-app.loadbalancer.server.port=8000"
+
+networks:
+  proxy:
+    external: true
+  internal:
+    driver: bridge
+
