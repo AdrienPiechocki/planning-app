@@ -328,7 +328,7 @@ def call_ollama(system_prompt: str, user_prompt: str) -> str:
         "format": "json",
         "stream": False,
         "options": {
-            "temperature": 0.3,   # plus littéral/déterministe, moins créatif sur le format
+            "temperature": 0.8,   # plus littéral/déterministe, moins créatif sur le format
             "num_predict": 512,   # un seul objet JSON attendu par appel : pas besoin d'une
                                   # grande marge comme pour l'ancien prompt "semaine entière".
             "num_ctx": 4096,
