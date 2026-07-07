@@ -1,6 +1,6 @@
-<td>{{ item.nom }}</td>
-<td class="muted">{{ item.jour_prefere or 'Flexible' }}</td>
-<td class="muted">
+<td data-label="Nom">{{ item.nom }}</td>
+<td class="muted" data-label="Jour préféré">{{ item.jour_prefere or 'Flexible' }}</td>
+<td class="muted" data-label="Horaire">
   {% if item.heure_debut and item.heure_fin %}{{ item.heure_debut.strftime('%H:%M') }} – {{ item.heure_fin.strftime('%H:%M') }}{% else %}—{% endif %}
 </td>
 <td>

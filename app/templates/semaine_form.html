@@ -162,13 +162,14 @@
 {% if recent_inputs %}
 <div style="margin-top: 3rem;">
   <h2>Semaines précédentes</h2>
+  <div class="table-wrap">
   <table>
     <thead><tr><th>Semaine du</th><th>Planning</th><th></th></tr></thead>
     <tbody>
       {% for wi in recent_inputs %}
       <tr>
-        <td>{{ wi.semaine_du.strftime('%d/%m/%Y') }}</td>
-        <td>
+        <td data-label="Semaine du">{{ wi.semaine_du.strftime('%d/%m/%Y') }}</td>
+        <td data-label="Planning">
           {% if wi.generated_planning %}
             <a href="/planning/{{ wi.generated_planning.id }}">Voir le planning ({{ wi.generated_planning.statut.value }})</a>
           {% else %}
@@ -186,6 +187,7 @@
       {% endfor %}
     </tbody>
   </table>
+  </div>
 </div>
 {% endif %}
 

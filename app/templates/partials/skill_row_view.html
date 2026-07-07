@@ -1,6 +1,6 @@
-<td>{{ item.nom }}</td>
-<td class="muted">{{ item.niveau_actuel or '—' }}</td>
-<td><span class="status-pill">{{ "envie d'apprentissage" if item.est_envie_apprentissage else "compétence connue" }}</span></td>
+<td data-label="Nom">{{ item.nom }}</td>
+<td class="muted" data-label="Niveau">{{ item.niveau_actuel or '—' }}</td>
+<td data-label="Type"><span class="status-pill">{{ "envie d'apprentissage" if item.est_envie_apprentissage else "compétence connue" }}</span></td>
 <td>
   <button type="button" class="btn-sm" hx-get="/skills/{{ item.id }}/edit" hx-target="#skill-{{ item.id }}" hx-swap="innerHTML">Modifier</button>
   <form method="post" action="/skills/{{ item.id }}/delete" onsubmit="return confirm('Supprimer ?');" style="display:inline">

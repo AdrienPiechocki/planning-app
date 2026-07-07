@@ -11,9 +11,14 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.13.5/cdn.min.js" defer></script>
 </head>
 <body>
-  <nav class="topnav">
-    <span class="topnav__logo">planning://</span>
-    <div class="topnav__links">
+  <nav class="topnav" x-data="{ open: false }" @keyup.escape="open = false">
+    <div class="topnav__row">
+      <span class="topnav__logo">planning://</span>
+      <button type="button" class="topnav__toggle" @click="open = !open" :aria-expanded="open.toString()" aria-label="Ouvrir le menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+    <div class="topnav__links" :class="{ 'topnav__links--open': open }" @click="open = false">
       <a href="/semaine" class="{{ 'active' if active == 'semaine' else '' }}">Cette semaine</a>
       <a href="/media" class="{{ 'active' if active == 'media' else '' }}">Bibliothèque</a>
       <a href="/skills" class="{{ 'active' if active == 'skills' else '' }}">Compétences</a>

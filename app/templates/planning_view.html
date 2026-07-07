@@ -22,13 +22,13 @@
 </div>
 {% endif %}
 
-<div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.5rem;">
+<div class="planning-header">
   <div>
     <div class="eyebrow">Semaine du {{ planning.weekly_input.semaine_du.strftime('%d/%m/%Y') }}</div>
     <h1>Planning <span class="status-pill">{{ planning.statut.value }}</span></h1>
   </div>
   {% if planning.statut.value != 'valide' %}
-  <div style="display: flex; gap: 0.6rem;">
+  <div class="planning-header__actions">
     <form method="post" action="/planning/{{ planning.id }}/regenerate" onsubmit="return confirm('Régénérer les activités IA (loisir/dev) ? Les impératifs restent inchangés.');">
       <button type="submit" class="btn">↻ Régénérer les activités IA</button>
     </form>

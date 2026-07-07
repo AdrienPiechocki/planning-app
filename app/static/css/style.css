@@ -42,7 +42,12 @@ a { color: inherit; }
   padding: 0.9rem 1.5rem;
   border-bottom: 1px solid var(--border-color);
   background: var(--bg-surface);
+  position: sticky;
+  top: 0;
+  z-index: 50;
 }
+
+.topnav__row { display: flex; align-items: center; justify-content: space-between; width: auto; }
 
 .topnav__logo {
   font-family: var(--font-mono);
@@ -53,12 +58,27 @@ a { color: inherit; }
 .topnav__logo::after { content: '_'; animation: blink 1.2s step-end infinite; }
 @keyframes blink { 50% { opacity: 0; } }
 
+.topnav__toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+}
+.topnav__toggle span { display: block; width: 18px; height: 2px; background: var(--text-primary); margin: 0 auto; }
+
 .topnav__links { display: flex; gap: 1.25rem; font-family: var(--font-mono); font-size: 0.85rem; }
 .topnav__links a {
   color: var(--text-muted);
   text-decoration: none;
   padding: 0.35rem 0;
   border-bottom: 2px solid transparent;
+  white-space: nowrap;
 }
 .topnav__links a:hover, .topnav__links a.active {
   color: var(--text-primary);
@@ -66,6 +86,30 @@ a { color: inherit; }
 }
 
 .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+
+@media (max-width: 720px) {
+  .topnav { flex-direction: column; align-items: stretch; gap: 0.75rem; padding: 0.8rem 1rem; }
+  .topnav__toggle { display: flex; }
+  .topnav__links {
+    flex-direction: column;
+    gap: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.2s ease;
+  }
+  .topnav__links--open { max-height: 320px; }
+  .topnav__links a {
+    padding: 0.7rem 0.2rem;
+    border-bottom: 1px solid var(--border-color);
+    border-left: 2px solid transparent;
+  }
+  .topnav__links a:hover, .topnav__links a.active {
+    border-bottom-color: var(--border-color);
+    border-left-color: var(--accent-recurrent);
+    padding-left: 0.6rem;
+  }
+  .container { padding: 1.25rem 1rem 3rem; }
+}
 
 /* ---------- Typography helpers ---------- */
 h1, h2, h3 { font-family: var(--font-mono); font-weight: 600; letter-spacing: -0.01em; margin: 0 0 0.5rem; }
@@ -102,8 +146,19 @@ input:focus, textarea:focus, select:focus {
   box-shadow: 0 0 0 3px rgba(79, 209, 197, 0.15);
 }
 .field { margin-bottom: 1.1rem; }
-.field-row { display: flex; gap: 0.75rem; }
-.field-row > .field { flex: 1; }
+.field-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.field-row > .field { flex: 1; min-width: 140px; }
+
+@media (max-width: 640px) {
+  .field-row { flex-direction: column; gap: 0; }
+  .field-row > .field { min-width: 0; }
+  input[type=text], input[type=date], input[type=time], input[type=number], textarea, select {
+    font-size: 1rem; /* évite le zoom auto iOS */
+    padding: 0.65rem 0.75rem;
+  }
+  .field[style*="max-width"] { max-width: none !important; }
+  h1 { font-size: 1.25rem; }
+}
 
 .checkbox-row { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; }
 .checkbox-row input { width: auto; }
@@ -129,6 +184,11 @@ button:hover, .btn:hover { border-color: var(--accent-recurrent); transform: tra
 .btn-ghost { background: transparent; border-color: transparent; color: var(--text-muted); }
 .btn-sm { padding: 0.3rem 0.6rem; font-size: 0.75rem; }
 
+@media (max-width: 640px) {
+  button, .btn { padding: 0.6rem 1rem; }
+  .btn-sm { padding: 0.45rem 0.7rem; font-size: 0.78rem; }
+}
+
 /* ---------- Tags de catégorie ---------- */
 .tag {
   display: inline-block;
@@ -145,6 +205,24 @@ button:hover, .btn:hover { border-color: var(--accent-recurrent); transform: tra
 .tag--projet_dev { background: rgba(167, 139, 250, 0.15); color: var(--accent-dev); }
 .tag--loisir { background: rgba(240, 114, 156, 0.15); color: var(--accent-loisir); }
 
+/* ---------- En-tête de la page planning ---------- */
+.planning-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+.planning-header__actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+
+@media (max-width: 640px) {
+  .planning-header { flex-direction: column; align-items: stretch; }
+  .planning-header__actions { width: 100%; }
+  .planning-header__actions form { flex: 1; }
+  .planning-header__actions button { width: 100%; }
+}
+
 /* ---------- Grille planning : rail façon graphe de commits ---------- */
 .planning-grid {
   display: grid;
@@ -152,6 +230,9 @@ button:hover, .btn:hover { border-color: var(--accent-recurrent); transform: tra
   gap: 1rem;
 }
 @media (max-width: 900px) {
+  .planning-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
   .planning-grid { grid-template-columns: 1fr; }
 }
 
@@ -230,3 +311,40 @@ tr:last-child td { border-bottom: none; }
 .list-add-form .field { margin-bottom: 0; min-width: 160px; flex: 1; }
 
 .status-pill { font-family: var(--font-mono); font-size: 0.68rem; padding: 0.15rem 0.5rem; border-radius: 999px; border: 1px solid var(--border-color); color: var(--text-muted); }
+
+/* ---------- Tables → cartes empilées sur mobile ---------- */
+@media (max-width: 640px) {
+  .table-wrap table, .table-wrap thead, .table-wrap tbody, .table-wrap th, .table-wrap td, .table-wrap tr {
+    display: block;
+  }
+  .table-wrap thead { position: absolute; left: -9999px; top: -9999px; } /* accessible mais masqué */
+  .table-wrap tr {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    margin-bottom: 0.8rem;
+    padding: 0.4rem 0.8rem;
+  }
+  .table-wrap td {
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.55rem 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    text-align: right;
+  }
+  .table-wrap td:last-child { border-bottom: none; justify-content: flex-end; }
+  .table-wrap td[data-label]::before {
+    content: attr(data-label);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    text-align: left;
+    flex-shrink: 0;
+  }
+  .table-wrap td[colspan] { display: block; }
+  .table-wrap td[colspan] .field-row { justify-content: flex-start; }
+}
