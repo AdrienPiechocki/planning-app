@@ -6,7 +6,13 @@
     </div>
     <div class="field">
       <label>Niveau actuel</label>
-      <input type="text" name="niveau_actuel" value="{{ item.niveau_actuel or '' }}" placeholder="débutant / intermédiaire / avancé">
+      <select name="niveau_actuel">
+          {% for niveau in ["débutant", "intermédiaire", "avancé"] %}
+              <option value="{{ niveau }}" {% if item.niveau_actuel == niveau %}selected{% endif %}>
+                  {{ niveau|capitalize }}
+              </option>
+          {% endfor %}
+      </select>
     </div>
     <div class="checkbox-row" style="margin-bottom: 0.6rem;">
       <input type="checkbox" id="envie_{{ item.id }}" name="est_envie_apprentissage" {{ 'checked' if item.est_envie_apprentissage else '' }}>
