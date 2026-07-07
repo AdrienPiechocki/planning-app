@@ -250,7 +250,7 @@ def select_weekly_subjects(db: Session, weekly_input: models.WeeklyInput) -> dic
 #      en une seule idée de projet réalisable en une semaine.
 # ---------------------------------------------------------------------------
 DEV_SYSTEM_PROMPT = """Tu proposes UNE idée de projet de développement original et concret, \
-adaptée au(x) sujet(s) et niveau(x) indiqués. \
+adaptée au(x) sujet(s) et niveau(x) indiqués par l'utilsateur. \
 Si plusieurs sujets sont donnés, propose UNE SEULE idée de projet qui les combine ou \
 les articule ensemble, plutôt qu'une idée par sujet.
 
@@ -258,14 +258,20 @@ Si le message utilisateur contient une idée précise donnée par l'utilisateur,
 cette idée telle quelle (reformulée en titre/description), et NE PAS proposer autre chose à la place. \
 Ne propose une idée de ton cru que si aucune idée précise n'est donnée.
 
+Voila comment tu dois considérer les différents niveaux indiquables par l'utilisateur :
+- Débutant: propose un projet simple pour apprendre la techno du sujet
+- Intermédiaire: propose un projet complet permettant d'approfondire les connaisances sur le sujet
+- Avancé: propose un projet complexe qui mets au défi les compétences sur le sujet
+
 RÉPONDS UNIQUEMENT avec un objet JSON, sans texte ni Markdown avant ou après, avec \
 EXACTEMENT ces clés :
 - "titre" : nom court du projet (ex: "Rust - petit client TUI").
-- "description" : 2 à 3 phrases décrivant concrètement le projet, son objectif final.
+- "description" : 2 à 3 phrases décrivant concrètement le projet.
 - "categorie" : toujours "projet_dev".
 
-Exemple de réponse correcte :
-{"titre": "Rust - petit client TUI", "description": "Développer un client avec une interface dans le terminal pour consulter la météo en Rust.", "categorie": "projet_dev"}
+Ne donne jamais de description de projet trop générique. Sois précis dans les descriptions.
+Exemple de réponse correcte pour du Rust, niveau débutant :
+{"titre": "Rust - petit client TUI", "description": "Développer une application avec une interface dans le terminal en Rust pour consulter la météo avec l'API OpenMétéo.", "categorie": "projet_dev"}
 """
 
 
