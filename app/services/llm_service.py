@@ -249,11 +249,10 @@ def select_weekly_subjects(db: Session, weekly_input: models.WeeklyInput) -> dic
 #    - Projet dev : un seul appel Ollama, combinant le(s) sujet(s) choisi(s)
 #      en une seule idée de projet réalisable en une semaine.
 # ---------------------------------------------------------------------------
-DEV_SYSTEM_PROMPT = """Tu proposes UNE idée de projet de développement personnel concret, \
-adaptée au(x) sujet(s) et niveau(x) indiqués, à réaliser progressivement sur plusieurs sessions \
-dans la semaine (chaque session reprendra ce même projet). Si plusieurs sujets \
-sont donnés, propose UNE SEULE idée de projet qui les combine ou les articule ensemble, plutôt \
-qu'une idée par sujet.
+DEV_SYSTEM_PROMPT = """Tu proposes UNE idée de projet de développement original et concret, \
+adaptée au(x) sujet(s) et niveau(x) indiqués. \
+Si plusieurs sujets sont donnés, propose UNE SEULE idée de projet qui les combine ou \
+les articule ensemble, plutôt qu'une idée par sujet.
 
 Si le message utilisateur contient une idée précise donnée par l'utilisateur, tu DOIS reprendre \
 cette idée telle quelle (reformulée en titre/description), et NE PAS proposer autre chose à la place. \
@@ -266,7 +265,7 @@ EXACTEMENT ces clés :
 - "categorie" : toujours "projet_dev".
 
 Exemple de réponse correcte :
-{"titre": "Rust - petit client TUI", "description": "Développer un client terminal pour consulter la météo en Rust.", "categorie": "projet_dev"}
+{"titre": "Rust - petit client TUI", "description": "Développer un client avec une interface dans le terminal pour consulter la météo en Rust.", "categorie": "projet_dev"}
 """
 
 
@@ -301,10 +300,10 @@ def build_dev_prompt(skills: list["models.SkillGoal"], notes_libres: str = "") -
     lines = []
     if len(skills) == 1:
         s = skills[0]
-        lines.append(f"Thème/sujet de projet dev imposé cette semaine: {s.nom}")
-        lines.append(f"Niveau de compétence actuel sur ce sujet: {s.niveau_actuel or 'non précisé'}")
+        lines.append(f"Thème/sujet de projet dev imposé: {s.nom}")
+        lines.append(f"Niveau de compétence sur ce sujet: {s.niveau_actuel or 'non précisé'}")
     else:
-        lines.append("Sujets de projet dev imposés cette semaine (à combiner en UNE seule idée):")
+        lines.append("Sujets de projet dev imposés (à combiner en UNE seule idée):")
         for s in skills:
             lines.append(f"- {s.nom} (niveau: {s.niveau_actuel or 'non précisé'})")
     if notes_libres.strip():
@@ -328,7 +327,7 @@ def call_ollama(system_prompt: str, user_prompt: str) -> str:
         "format": "json",
         "stream": False,
         "options": {
-            "temperature": 0.8,   # plus littéral/déterministe, moins créatif sur le format
+            "temperature": 1.2,   # plus littéral/déterministe, moins créatif sur le format
             "num_predict": 512,   # un seul objet JSON attendu par appel : pas besoin d'une
                                   # grande marge comme pour l'ancien prompt "semaine entière".
             "num_ctx": 4096,
