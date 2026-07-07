@@ -251,7 +251,7 @@ def select_weekly_subjects(db: Session, weekly_input: models.WeeklyInput) -> dic
 # ---------------------------------------------------------------------------
 DEV_SYSTEM_PROMPT = """Tu proposes UNE idée de projet de développement personnel concret, \
 adaptée au(x) sujet(s) et niveau(x) indiqués, à réaliser progressivement sur plusieurs sessions \
-dans la semaine (chaque session reprendra ce même projet à l'étape suivante). Si plusieurs sujets \
+dans la semaine (chaque session reprendra ce même projet). Si plusieurs sujets \
 sont donnés, propose UNE SEULE idée de projet qui les combine ou les articule ensemble, plutôt \
 qu'une idée par sujet.
 
